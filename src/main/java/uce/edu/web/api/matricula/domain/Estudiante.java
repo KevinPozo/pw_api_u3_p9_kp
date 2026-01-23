@@ -9,10 +9,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @Table(name = "estudiante")
 @SequenceGenerator(name = "estudiante_seq", sequenceName = "estudiante_secuencia", allocationSize = 1)
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Estudiante extends PanacheEntityBase {
 
     @Id
