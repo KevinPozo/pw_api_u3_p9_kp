@@ -10,7 +10,10 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import uce.edu.web.api.matricula.application.MateriaService;
 import uce.edu.web.api.matricula.domain.Materia;
 
@@ -22,45 +25,60 @@ public class MateriaResource {
 
     @GET
     @Path("")
-    public List<Materia> listarTodos(@QueryParam("codigo") String codigo, @QueryParam("semestre") String semestre) {
-        if (codigo != null && !codigo.isEmpty()) {
-            Materia m = this.materiaService.buscarPorCodigo(codigo);
-            return m != null ? List.of(m) : List.of();
-        }
-        if (semestre != null && !semestre.isEmpty()) {
-            Materia m = this.materiaService.buscarPorSemestre(semestre);
-            return m != null ? List.of(m) : List.of();
-        }
-        return this.materiaService.listarTodos();
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response listarTodos() {
+        return Response.status(Response.Status.OK).entity(this.materiaService.listarTodos()).build();
+    }
+
+    @GET
+    @Path("/codigo/{codigo}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response buscarPorCodigo(@PathParam("codigo") String codigo) {
+        Materia materia = this.materiaService.buscarPorCodigo(codigo);
+        return Response.status(210).entity(materia).build();
+    }
+
+    @GET
+    @Path("/semestre/{semestre}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response buscarPorSemestre(@PathParam("semestre") String semestre) {
+        Materia materia = this.materiaService.buscarPorSemestre(semestre);
+        return Response.status(210).entity(materia).build();
     }
 
     @GET
     @Path("/{id}")
-    public Materia consultarPorId(@PathParam("id") Integer id) {
-        return this.materiaService.consultarPorId(id);
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response consultarPorId(@PathParam("id") Integer id) {
+        Materia materia = this.materiaService.consultarPorId(id);
+        return Response.status(Response.Status.OK).entity(materia).build();
     }
 
     @POST
     @Path("")
-    public void guardarMateria(Materia materia) {
+    public Response guardarMateria(Materia materia) {
         this.materiaService.crear(materia);
+        return Response.status(Response.Status.CREATED).entity(materia).build();
     }
 
     @PUT
     @Path("/{id}")
-    public void actualizarMateria(@PathParam("id") Integer id, Materia materia) {
+    public Response actualizarMateria(@PathParam("id") Integer id, Materia materia) {
         this.materiaService.actualizar(id, materia);
+        return Response.status(Response.Status.OK).entity(materia).build();
     }
 
     @PATCH
     @Path("/{id}")
-    public void actualizarMateriaParcial(@PathParam("id") Integer id, Materia materia) {
+    public Response actualizarMateriaParcial(@PathParam("id") Integer id, Materia materia) {
         this.materiaService.actualizarParcial(id, materia);
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 
     @DELETE
     @Path("/{id}")
-    public void eliminarMateria(@PathParam("id") Integer id) {
+    public Response eliminarMateria(@PathParam("id") Integer id) {
         this.materiaService.eliminar(id);
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 }
