@@ -11,59 +11,84 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.Consumes;
+
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import uce.edu.web.api.matricula.application.EstudianteService;
-import uce.edu.web.api.matricula.domain.Estudiante;
+import uce.edu.web.api.matricula.application.HijoService;
+import uce.edu.web.api.matricula.application.representation.EstudianteRepresentation;
+
+import uce.edu.web.api.matricula.domain.Hijo;
 
 @Path("/estudiantes")
 public class EstudianteResource {
     @Inject
     private EstudianteService estudianteService;
+    @Inject
+    private HijoService hijoService;
 
     @GET
     @Path("")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Estudiante> listarTodos() {
+    public List<EstudianteRepresentation> listarTodos() {
         System.out.println("ALISTAR TODOS XXXXXXXXXXXXX");
         return this.estudianteService.listarTodos();
     }
+
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_XML)
-    public Estudiante consultarPorId(@PathParam("id") Integer id) {
+    public EstudianteRepresentation consultarPorId(@PathParam("id") Integer id) {
         return this.estudianteService.consultarPorId(id);
     }
 
     @POST
     @Path("")
-    public Response guardarEstudiante(Estudiante estu){
-        this.estudianteService.crear(estu);
-        return Response.status(Response.Status.CREATED).entity(estu).build();
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response guardarEstudiante(EstudianteRepresentation estu) {
+        EstudianteRepresentation creado = this.estudianteService.crear(estu);
+        return Response.status(Response.Status.CREATED).entity(creado).build();
     }
+
     @PUT
     @Path("/{id}")
-    public Response actualizarEstudiante(@PathParam("id") Integer id, Estudiante estu){
-        this.estudianteService.actualizar(id, estu);
-        return Response.status(209).entity(null).build();
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response actualizarEstudiante(@PathParam("id") Integer id, EstudianteRepresentation estu) {
+        EstudianteRepresentation actualizado = this.estudianteService.actualizar(id, estu);
+        return Response.status(209).entity(actualizado).build();
     }
+
     @PATCH
     @Path("/{id}")
-    public void actualizarEstudianteParcial(@PathParam("id") Integer id, Estudiante estu){
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void actualizarEstudianteParcial(@PathParam("id") Integer id, EstudianteRepresentation estu) {
         this.estudianteService.actualizarParcial(id, estu);
-        
+
     }
+
     @DELETE
     @Path("/{id}")
-    public void eliminarEstudiante(@PathParam("id") Integer id){
+    public void eliminarEstudiante(@PathParam("id") Integer id) {
         this.estudianteService.eliminar(id);
     }
 
     @GET
     @Path("/provincia/genero")
-    public List<Estudiante> buscarPorProvincia(@QueryParam("provincia") String provincia, @QueryParam("genero") String genero) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<EstudianteRepresentation> buscarPorProvincia(@QueryParam("provincia") String provincia,
+            @QueryParam("genero") String genero) {
         System.out.println("ALISTAR POR PROVINCIA Y GENERO XXXXXXXXXXXXX");
         return this.estudianteService.buscarPorProvincia(provincia, genero);
+    }
+
+    @GET
+    @Path("/{id}/hijos")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Hijo> buscarPorIdEstudiante(@PathParam("id") Integer id) {
+        return this.hijoService.buscarPorIdEstudiante(id);
     }
 }
