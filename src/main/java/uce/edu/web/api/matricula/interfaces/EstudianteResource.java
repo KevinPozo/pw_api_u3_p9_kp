@@ -2,7 +2,6 @@ package uce.edu.web.api.matricula.interfaces;
 
 import java.util.List;
 
-import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.DELETE;
@@ -38,7 +37,7 @@ public class EstudianteResource {
 
     @GET
     @Path("")
-    @RolesAllowed("admin")
+    @RolesAllowed({ "admin", "user", "docente" })
     @Produces(MediaType.APPLICATION_JSON)
     public List<EstudianteRepresentation> listarTodos() {
         System.out.println("ALISTAR TODOS XXXXXXXXXXXXX");
@@ -49,8 +48,7 @@ public class EstudianteResource {
 
     @GET
     @Path("/{id}")
-    // @PermitAll
-    @RolesAllowed("admin")
+    @RolesAllowed({ "admin", "user", "docente" })
     public EstudianteRepresentation consultarPorId(@PathParam("id") Integer id) {
         EstudianteRepresentation er = this.estudianteService.consultarPorId(id);
         if (er == null) {
